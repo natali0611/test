@@ -1,6 +1,7 @@
 # go_app
 1. Создание web приложения на go с проксированием 
 Установка golang
+
 ```sudo apt update
 sudo apt upgrade
 sudo apt install golang```
