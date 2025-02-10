@@ -1,15 +1,16 @@
-# go_app
-## 1. Создание web приложения на go с проксированием  
-### Установка golang
+# Создание приложения на Go, которое отображает в браузере "Hello, World!"
+## Предварительные требования:
+* Ubuntu 22.04 or lower
+* Installed golang
+* Docker
+* Docker-compose
 
-```
-sudo apt update
-sudo apt upgrade
-sudo apt install golang
-```
+##  Создание web приложения на go   
 
  Создание директории для проекта
-`mkdir go_app`
+```
+mkdir go_app
+```
 
  Создаем файл для приложения  [main.go](https://github.com/natali0611/go_app/blob/simple/main.go)
 ```
@@ -24,39 +25,26 @@ func hello(w http.ResponseWriter, r *http.Request) {
     fmt.Fprint(w, "Hello, World!")
 }
 
-func main() {            # 
+func main() {             
 	http.HandleFunc("/", hello)
         fmt.Println("Listening on port 8080    ") 
         http.ListenAndServe(":8080", nil)
 }
 ```
 Создаем файл с зависимостями [go.mod](https://github.com/natali0611/go_app/blob/simple/go.mod)
-`go mod init go_app`
-
-Запуск приложения в фоновом режиме `go run main.go &`
-
-### Настройка обратного проксирования с nginx
-
-`sudo apt install nginx -y`
-
-Создание файла [nginx.conf](https://github.com/natali0611/go_app/blob/simple/nginx.conf) и располагаем по данному пути /etc/nginx/conf.d/default
 ```
-server {
-    listen 80;             
-    server_name localhost;
-    
-    location / {
-        proxy_pass http://go_app:8080; 
-        proxy_set_header Host $host;
-        proxy_set_header X-Real_IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-}
+go mod init go_app
 ```
-Перезапуск сервера для применения настроек `sudo systemctl reload nginx`
 
-## 2. Запуск приложения с использованием docker
+Запуск приложения в фоновом режиме
+```
+go run main.go &
+```
+Проверка запущенного приложения
+```
+curl http://localhost:8080
+```
+##  Запуск приложения с использованием docker
 
 ### Создание dockerfile с использованием multistage с целью уменьшения размера образа [Dockerfile](https://github.com/natali0611/go_app/blob/simple/Dockerfile)
 ```
@@ -74,11 +62,15 @@ CMD ["./go_app"]
 ```
 Файл находится в папке проекта go_app
 Собираем образ
-`docker build -t hello .`
+```
+docker build -t hello .
+```
 запускаем контейнер
-`docker run -p "8080:8080" hello`
+```
+docker run -p "8080:8080" hello
+```
 
-## 3. Сборка и запуск приложения с обратным прокси путем  docker-compose
+## Сборка и запуск приложения с обратным прокси путем  docker-compose
 
 Создаем файл [docker-compose.yaml](https://github.com/natali0611/go_app/blob/simple/docker-compose.yaml)
 Запускаем `docker-compose up`
@@ -100,9 +92,7 @@ services:
       - go_app
 ```
 
-## 4. В качестве проверки после запуска приложения в браузере http://localhost:8080 выдается страница с Hello, World!
-  (Не заходя в браузер можем проверить исполняемость curl http://localhost:8080)
-   При подключении обратного проксирования по пути http://localhost:80 так же выводится Hello, Wold!
+Проверяем  в браузере http://localhost:80 отображается страница "Hello, World!"
  
 
 
