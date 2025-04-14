@@ -3,12 +3,10 @@ import redis
 
 app = Flask(__name__)
 
-# Redis Configuration
 redis_host = "redis"
 redis_port = 6379
 redis_client = redis.Redis(host=redis_host, port=redis_port, decode_responses=True)
 
-# Имя ключа для счетчика посещений
 COUNTER_KEY = "visit_count"
 
 @app.route("/ping", methods=['GET'])
